@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAIWS – History</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    .history-card {
+      background: #fff;
+      border-radius: 18px;
+      border: 2px solid var(--card-border);
+      padding: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.97rem;
+    }
+    .history-table thead tr { background: #dff0df; }
+    .history-table thead th {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: var(--text-dark);
+      padding: 16px 28px;
+      text-align: left;
+    }
+    .history-table tbody tr {
+      border-top: 1px solid #e8f5e8;
+      transition: background 0.15s;
+    }
+    .history-table tbody tr:hover { background: #f6fcf6; }
+    .history-table tbody td {
+      padding: 18px 28px;
+      color: var(--text-mid);
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <span class="navbar-brand">SAIWS</span>
+  <div class="navbar-icons">
+    <button title="Notifications">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+      </svg>
+    </button>
+    <div class="profile-wrap">
+      <button id="profileBtn" title="Profile">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+        </svg>
+      </button>
+      <div id="profileDropdown" class="profile-dropdown">
+        <a href="#">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          View Profile
+        </a>
+        <a href="settings.html">
+          <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.02 7.02 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 14 2h-4a.484.484 0 0 0-.48.41l-.36 2.54a7.4 7.4 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.47.47 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.04.67 1.62.94l.36 2.54c.05.24.27.41.48.41h4c.24 0 .44-.17.48-.41l.36-2.54a7.4 7.4 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+          Settings
+        </a>
+        <div class="divider"></div>
+        <a href="../login.html">
+          <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+          Log out
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="../index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="history.html" class="active">History</a>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <h1 class="page-title">Irrigation History</h1>
+    </div>
+
+    <div class="history-card">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Duration</th>
+            <th>Repeat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Afternoon</td><td>21 March 2026</td><td>20 minutes</td><td>Weekly</td></tr>
+          <tr><td>Morning</td><td>14 March 2026</td><td>50 minutes</td><td>Weekly</td></tr>
+          <tr><td>Morning</td><td>7 March 2026</td><td>35 minutes</td><td>Weekly</td></tr>
+          <tr><td>Evening</td><td>28 Feb 2026</td><td>45 minutes</td><td>Weekly</td></tr>
+          <tr><td>Morning</td><td>21 Feb 2026</td><td>15 minutes</td><td>Weekly</td></tr>
+          <tr><td>Evening</td><td>14 Feb 2026</td><td>30 minutes</td><td>Weekly</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAIWS – Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    .settings-section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .settings-list {
+      margin-top: 16px;
+      border-top: 1px solid #e0ede0;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 4px;
+      border-bottom: 1px solid #e0ede0;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-radius: 6px;
+    }
+    .settings-row:hover {
+      background: #f0faf0;
+    }
+
+    .settings-row-label {
+      font-size: 1rem;
+      color: var(--text-dark);
+      font-weight: 400;
+    }
+
+    .settings-row-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-mid);
+      font-size: 0.97rem;
+    }
+
+    .settings-row-right svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--text-dark);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <span class="navbar-brand">SAIWS</span>
+  <div class="navbar-icons">
+    <button title="Notifications">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+      </svg>
+    </button>
+    <div class="profile-wrap">
+      <button id="profileBtn" title="Profile">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+        </svg>
+      </button>
+      <div id="profileDropdown" class="profile-dropdown">
+        <a href="profile.html">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          View Profile
+        </a>
+        <a href="settings.html" class="active">
+          <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.02 7.02 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 14 2h-4a.484.484 0 0 0-.48.41l-.36 2.54a7.4 7.4 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.47.47 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.04.67 1.62.94l.36 2.54c.05.24.27.41.48.41h4c.24 0 .44-.17.48-.41l.36-2.54a7.4 7.4 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+          Settings
+        </a>
+        <div class="divider"></div>
+        <a href="../login.html">
+          <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+          Log out
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="../index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="history.html">History</a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="page-header">
+      <h1 class="page-title">Settings</h1>
+    </div>
+
+    <div class="settings-section-title">General</div>
+
+    <div class="settings-list">
+
+      <div class="settings-row">
+        <span class="settings-row-label">User name</span>
+        <div class="settings-row-right">
+          <span>A</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-row-label">Email address</span>
+        <div class="settings-row-right">
+          <span>nguyenvana@gmail.com</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-row-label">Phone number</span>
+        <div class="settings-row-right">
+          <span>*******123</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-row-label">Password</span>
+        <div class="settings-row-right">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-row-label">Language</span>
+        <div class="settings-row-right">
+          <span>English</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-row-label">Theme</span>
+        <div class="settings-row-right">
+          <span>Light mode</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

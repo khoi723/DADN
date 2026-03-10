@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAIWS – Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      width: 50%;
+      background: #7ED87F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    .left-panel h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a2e1a;
+      text-align: center;
+      line-height: 1.35;
+      max-width: 320px;
+    }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      width: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    /* ── LOGIN CARD ── */
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: #7ED87F;
+      padding: 22px 28px;
+      text-align: center;
+      border-radius: 14px 14px 0 0;
+    }
+    .card-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1a2e1a;
+    }
+
+    .card-body {
+      padding: 28px 28px 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.88rem;
+      color: #3d5c3d;
+      margin-bottom: 7px;
+      font-weight: 500;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap input {
+      width: 100%;
+      padding: 12px 44px 12px 14px;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.97rem;
+      color: #1a2e1a;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-wrap input:focus {
+      border-color: #3a9e3b;
+    }
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+    .toggle-pw svg {
+      width: 22px;
+      height: 22px;
+      fill: #555;
+    }
+
+    .forgot-link {
+      display: block;
+      text-align: right;
+      font-size: 0.82rem;
+      color: #1a2e1a;
+      text-decoration: underline;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: #7ED87F;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1a2e1a;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.18s;
+    }
+    .btn-login:hover {
+      background: #5ec860;
+    }
+
+    .register-text {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #444;
+    }
+    .register-text a {
+      font-weight: 700;
+      color: #1a2e1a;
+      text-decoration: none;
+    }
+    .register-text a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 650px) {
+      body { flex-direction: column; }
+      .left-panel, .right-panel { width: 100%; }
+      .left-panel { padding: 40px 20px; min-height: 180px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <h1>Smart Automatic Irrigation Web System</h1>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="login-card">
+
+      <div class="card-header">
+        <h2>Welcome to SAIWS!</h2>
+      </div>
+
+      <div class="card-body">
+
+        <div class="form-group">
+          <label for="usernameInput">Username or Email</label>
+          <div class="input-wrap">
+            <input type="text" id="usernameInput" autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="passwordInput">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="passwordInput" autocomplete="current-password" />
+            <button class="toggle-pw" onclick="togglePassword()" type="button" title="Show/hide password">
+              <svg id="eyeIcon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+              </svg>
+            </button>
+          </div>
+          <span class="forgot-link">Forgot password?</span>
+        </div>
+
+        <button class="btn-login" onclick="handleLogin()">Login</button>
+
+        <p class="register-text">
+          Don't have any accounts? <a href="#">Register</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const input = document.getElementById('passwordInput');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function handleLogin() {
+      const username = document.getElementById('usernameInput').value.trim();
+      const password = document.getElementById('passwordInput').value.trim();
+      if (!username || !password) {
+        alert('Please enter your username and password.');
+        return;
+      }
+      window.location.href = 'index.html';
+    }
+  </script>
+
+</body>
+</html>

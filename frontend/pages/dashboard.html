@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAIWS – Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      grid-template-rows: auto auto;
+      gap: 22px;
+    }
+    .dash-card {
+      background: #fff;
+      border-radius: 18px;
+      border: 2px solid var(--card-border);
+      padding: 24px 28px;
+      box-shadow: var(--shadow);
+    }
+    .dash-card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 20px;
+    }
+    .card-moisture { grid-column: 1; grid-row: 1; }
+    .card-temp     { grid-column: 2; grid-row: 1; }
+    .card-water    { grid-column: 1 / -1; grid-row: 2; }
+    .donut-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 10px;
+    }
+    .donut-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .donut-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+    .donut-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .donut-caption {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      font-weight: 500;
+      text-align: center;
+    }
+    .temp-container {
+      position: relative;
+      height: 160px;
+    }
+    .water-container {
+      position: relative;
+      height: 220px;
+      width: 100%;
+    }
+    @media (max-width: 900px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .card-moisture { grid-column: 1; grid-row: 1; }
+      .card-temp     { grid-column: 1; grid-row: 2; }
+      .card-water    { grid-column: 1; grid-row: 3; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <span class="navbar-brand">SAIWS</span>
+  <div class="navbar-icons">
+    <button title="Notifications">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+      </svg>
+    </button>
+    <div class="profile-wrap">
+      <button id="profileBtn" title="Profile">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+        </svg>
+      </button>
+      <div id="profileDropdown" class="profile-dropdown">
+        <a href="#">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          View Profile
+        </a>
+        <a href="settings.html">
+          <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.02 7.02 0 0 0-1.62-.94l-.36-2.54A.484.484 0 0 0 14 2h-4a.484.484 0 0 0-.48.41l-.36 2.54a7.4 7.4 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.47.47 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.04.67 1.62.94l.36 2.54c.05.24.27.41.48.41h4c.24 0 .44-.17.48-.41l.36-2.54a7.4 7.4 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+          Settings
+        </a>
+        <div class="divider"></div>
+        <a href="../login.html">
+          <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+          Log out
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="../index.html">Home</a>
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="history.html">History</a>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <h1 class="page-title">Dashboard</h1>
+    </div>
+
+    <div class="dashboard-grid">
+
+      <div class="dash-card card-moisture">
+        <div class="dash-card-title">Moisture</div>
+        <div class="donut-row">
+          <div class="donut-wrap">
+            <div class="donut-container">
+              <canvas id="chartTotal"></canvas>
+              <div class="donut-label">81%</div>
+            </div>
+            <div class="donut-caption">Total Moisture</div>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut-container">
+              <canvas id="chartAvg"></canvas>
+              <div class="donut-label">22%</div>
+            </div>
+            <div class="donut-caption">Average Moisture</div>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut-container">
+              <canvas id="chartOptimal"></canvas>
+              <div class="donut-label">62%</div>
+            </div>
+            <div class="donut-caption">Optimal Moisture</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-card card-temp">
+        <div class="dash-card-title">Temperature</div>
+        <div class="temp-container">
+          <canvas id="chartTemp"></canvas>
+        </div>
+      </div>
+
+      <div class="dash-card card-water">
+        <div class="dash-card-title">Water Usage</div>
+        <div class="water-container">
+          <canvas id="chartWater"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/main.js"></script>
+<script>
+  new Chart(document.getElementById('chartTotal'), {
+    type: 'doughnut',
+    data: { datasets: [{ data: [81, 19], backgroundColor: ['#e05555', '#f5c0c0'], borderWidth: 0, hoverOffset: 0 }] },
+    options: { cutout: '72%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 800 } }
+  });
+  new Chart(document.getElementById('chartAvg'), {
+    type: 'doughnut',
+    data: { datasets: [{ data: [22, 78], backgroundColor: ['#3a9e3b', '#c8e6c9'], borderWidth: 0, hoverOffset: 0 }] },
+    options: { cutout: '72%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 800 } }
+  });
+  new Chart(document.getElementById('chartOptimal'), {
+    type: 'doughnut',
+    data: { datasets: [{ data: [62, 38], backgroundColor: ['#7c6fc4', '#cdc9e8'], borderWidth: 0, hoverOffset: 0 }] },
+    options: { cutout: '72%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 800 } }
+  });
+  new Chart(document.getElementById('chartTemp'), {
+    type: 'line',
+    data: {
+      labels: ['8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00'],
+      datasets: [{ data: [20,22,25,30,36,34,30,28], borderColor: '#9b93d4', backgroundColor: 'rgba(155,147,212,0.18)', borderWidth: 2, pointRadius: 0, fill: true, tension: 0.4 }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } },
+        y: { min: 0, max: 40, ticks: { stepSize: 8, font: { size: 11 }, color: '#888' }, grid: { color: '#eee' } }
+      }
+    }
+  });
+  new Chart(document.getElementById('chartWater'), {
+    type: 'bar',
+    data: {
+      labels: ['14-2','21-2','28-2','7-3','14-3','21-3','28-3','4-4'],
+      datasets: [
+        { label: '2026', data: [245,230,210,225,250,245,235,240], backgroundColor: '#8b83d4', borderRadius: 4, borderSkipped: false, barPercentage: 0.55 },
+        { label: 'Target', data: [290,285,270,275,295,285,280,285], backgroundColor: 'rgba(139,131,212,0.2)', borderRadius: 4, borderSkipped: false, barPercentage: 0.55 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { filter: item => item.text === '2026', font: { size: 12 }, color: '#555', boxWidth: 14, boxHeight: 14 } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } },
+        y: { min: 0, max: 300, ticks: { stepSize: 50, font: { size: 11 }, color: '#888' }, grid: { color: '#eee' } }
+      }
+    }
+  });
+</script>
+</body>
+</html>
