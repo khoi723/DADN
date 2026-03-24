@@ -6,8 +6,35 @@
   <title>SAIWS – Home</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/style.css"/>
+  <script type="module" src="js/Devices.js"></script>
 </head>
-<body>
+<body onload="page_Load()">
+
+<!-- WATERING NEEDED NOTIFICATION ICON -->
+<div id="wateringNeededIcon" class="watering-needed-icon" title="Plants need watering">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.32 0z" fill="currentColor"/>
+  </svg>
+  <span class="pulse-dot"></span>
+</div>
+
+<!-- MOISTURE WARNING MODAL -->
+<div id="moistureWarningModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>⚠️ Moisture Alert</h2>
+      <button class="modal-close" onclick="closeMoistureWarning()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="moistureWarningText">Moisture level is outside the configured range!</p>
+      <p class="moisture-details"><strong>Current Moisture:</strong> <span id="currentMoisture">0</span>%</p>
+      <p class="moisture-details"><strong>Configured Range:</strong> <span id="configuredRange"></span></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-close" onclick="closeMoistureWarning()">Close</button>
+    </div>
+  </div>
+</div>
 
 <!-- NAVBAR -->
 <nav class="navbar">
@@ -59,8 +86,9 @@
     <!-- Header row -->
     <div class="page-header">
       <div class="sensor-badges">
-        <div class="badge" id="moistureBadge">Moisture: 34%</div>
-        <div class="badge" id="tempBadge">Temperature: 27°C</div>
+        <div class="badge" id="moistureBadge">Moisture: <span id='lblMoisture'></span>%</div>
+        <div class="badge" id="humidityBadge">Humidity: <span id='lblHumidity'></span>%</div>
+        <div class="badge" id="tempBadge">Temperature: <span id='lblTemp'></span>°C</div>
       </div>
     </div>
 
@@ -74,7 +102,7 @@
           <div class="card-title">Automatic</div>
 
           <div class="auto-row">
-            <span>Turn on the pump when the moisture is</span>
+            <span>Lower border</span>
             <select class="select-pill" id="onCondition">
               <option value="above" selected>above</option>
               <option value="below">below</option>
@@ -84,7 +112,7 @@
           </div>
 
           <div class="auto-row">
-            <span>Turn off the pump when the moisture is</span>
+            <span>Upper limit</span>
             <select class="select-pill" id="offCondition">
               <option value="above">above</option>
               <option value="below" selected>below</option>

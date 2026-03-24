@@ -340,3 +340,221 @@ body {
   .main { padding: 20px 14px; }
   .auto-row { font-size: 0.85rem; }
 }
+
+/* ── MOISTURE WARNING MODAL ── */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 450px;
+  width: 90%;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: var(--white);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.modal-close:hover {
+  transform: scale(1.2);
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-body p {
+  margin: 12px 0;
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+.modal-body p:first-child {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ff6b6b;
+}
+
+.moisture-details {
+  background: #fef5f5;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border-left: 4px solid #ff6b6b;
+  font-size: 0.95rem;
+  font-family: 'Courier New', monospace;
+}
+
+.moisture-details strong {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.moisture-details span {
+  color: #ff6b6b;
+  font-weight: 700;
+}
+
+.modal-footer {
+  padding: 16px 20px;
+  background: #f9f9f9;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  border-top: 1px solid #e8e8e8;
+}
+
+.btn-close {
+  padding: 10px 24px;
+  background: var(--green-bg);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+}
+
+.btn-close:hover {
+  background: var(--green-dark);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(58, 158, 59, 0.3);
+}
+
+.btn-close:active {
+  transform: translateY(0);
+}
+
+/* ── WATERING NEEDED ICON ── */
+.watering-needed-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  border-radius: 50%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(74, 144, 226, 0.4);
+  cursor: pointer;
+  z-index: 900;
+  transition: all 0.3s ease;
+}
+
+.watering-needed-icon.show {
+  display: flex;
+  animation: popUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popUp {
+  from {
+    transform: scale(0) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.watering-needed-icon svg {
+  width: 32px;
+  height: 32px;
+  color: var(--white);
+}
+
+.watering-needed-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.6);
+}
+
+.pulse-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #ff6b6b;
+  border-radius: 50%;
+  top: 8px;
+  right: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(255, 107, 107, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .watering-needed-icon {
+    bottom: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .watering-needed-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+}
