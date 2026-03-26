@@ -8,6 +8,8 @@
 #define DHT_PIN 18
 #include <DHT11.h> // ref: https://github.com/dhrubasaha08/DHT11
 DHT11 dht11(DHT_PIN);
+/* DC motor */
+#define MOTOR_PIN 13
 /* Google Firebase */
 #include <FirebaseESP32.h> // ref: https://github.com/mobizt/Firebase-ESP8266
 #define DB_URL "https://dadn252-default-rtdb.asia-southeast1.firebasedatabase.app/" // Realtime Database > Data > URL
@@ -17,6 +19,7 @@ FirebaseConfig config; FirebaseAuth auth; FirebaseData fbdo; // firebase data ob
 void setup() {
   Serial.begin(115200);
   initWifi();
+  initMotor();
   initFirebase();
 }
 // loop to run repeatedly
@@ -28,7 +31,12 @@ void loop() {
   int moist = readAO();
   Serial.println("Moisture: " + String(moist));
   setValueToFirebase(temp, humi, moist);
-  delay(100);
+  int value = getValueFromFirebase();
+  if (value) {
+    onMotor();
+  } else {
+    offMotor();
+  }
 }
 /* DHT11 */
 void readDHT11(int& temp, int& humi) {
@@ -54,6 +62,16 @@ void initWifi() {
   Serial.print("\nWiFi connected, IP address: "); Serial.println(WiFi.localIP());
   WiFi.setAutoReconnect(true); WiFi.persistent(true);
 }
+/* DC motor */
+void initMotor() {
+  pinMode(MOTOR_PIN, OUTPUT);
+}
+void onMotor() {
+  digitalWrite(MOTOR_PIN, HIGH);
+}
+void offMotor() {
+  digitalWrite(MOTOR_PIN, LOW);
+}
 /* FIREBASE */
 void initFirebase() {
   config.database_url = DB_URL;
@@ -67,4 +85,12 @@ void setValueToFirebase(int temp, int humi, int moist) {
     Firebase.setInt(fbdo, "DHT11/humi", humi);
     Firebase.setInt(fbdo, "SOIL/moist", moist);
   }
+}
+int getValueFromFirebase() {
+  int value = -1;
+  if (Firebase.ready()) {
+    if (Firebase.getInt(fbdo, "MOTOR/status")) value = fbdo.intData();
+    Serial.println("value: " + String(value)); // for DEBUG
+  }
+  return value;
 }
