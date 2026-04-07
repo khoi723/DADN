@@ -1,0 +1,116 @@
+*, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container chính của Form */
+        .register-card {
+            width: 100%;
+            max-width: 450px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Header màu xanh lá cây nhạt */
+        .card-header {
+            background-color: #b2ff9e;
+            padding: 20px;
+        }
+
+        .card-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .card-body {
+            padding: 30px 40px;
+        }
+
+        /* Định dạng các nhóm nhập liệu */
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid #000;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #7ED87F;
+        }
+
+        /* Nút Sign up */
+        .btn-signup {
+            width: 100%;
+            padding: 15px;
+            background-color: #b2ff9e;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4caf50; /* Màu chữ xanh lá đậm hơn một chút */
+            cursor: pointer;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-signup:hover {
+            opacity: 0.9;
+        }
+
+        /* Dòng link chuyển sang Login */
+        .login-text {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .login-text a {
+            font-weight: 700;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .login-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Khu vực hiển thị thông báo lỗi/thành công */
+        #message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        .hidden { display: none; }
+        .error { background: #fdeaea; color: #d93025; }
+        .success { background: #e6f4ea; color: #1e8e3e; }

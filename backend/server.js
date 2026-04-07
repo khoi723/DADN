@@ -50,6 +50,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend')));
 // =================================================================
 // Xử lý Login
 const loginHandler = require('./services/Login')(DB);
+const signupHandler = require('./services/SignUp')(DB);
 
 // =================================================================
 // 5. ĐỊNH NGHĨA CÁC ĐƯỜNG DẪN API (ROUTING)
@@ -58,6 +59,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname,'..', 'frontend', 'views', 'login.html'));
 });
 app.post('/login', loginHandler.login);
+app.post('/signup', signupHandler.signup);
 
 // =================================================================
 // 6. BẬT SERVER LẮNG NGHE

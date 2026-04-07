@@ -28,7 +28,7 @@ module.exports = (DB) => {
                     'SELECT * FROM Users WHERE email = ? LIMIT 1',
                     [username]
                 );
-                    user = rows[0];
+                user = rows[0];
                 }
                 if (!user){
                     return res.status(401).json({

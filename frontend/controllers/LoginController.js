@@ -1,30 +1,13 @@
-import AuthModel from '../models/AuthModel.js';
+import AuthModel from '/models/AuthModel.js';
+import View from '/views/View.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
-    const messageBox = document.getElementById('message');
 
-    // Đối tượng View: Quản lý hiển thị (Thay thế hàm showMessage dư thừa)
-    const view = {
-        showSuccess: (text) => {
-            messageBox.textContent = text;
-            messageBox.className = 'message success';
-            messageBox.classList.remove('hidden');
-        },
-        showError: (text) => {
-            messageBox.textContent = text;
-            messageBox.className = 'message error';
-            messageBox.classList.remove('hidden');
-        },
-        hideMessage: () => {
-            messageBox.classList.add('hidden');
-        }
-    };
-
-    // BƯỚC 1: Lắng nghe sự kiện click nút "OK"
+   // BƯỚC 1: Lắng nghe sự kiện click nút "OK"
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        view.hideMessage();
+        View.hideMessage();
 
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
@@ -47,20 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Lưu vào Model
                 AuthModel.setToken(data.token); 
                 // Hiển thị qua View
-                view.showSuccess(data.message);
+                View.showSuccess(data.message);
                 
                 // Điều hướng sang Homepage
                 setTimeout(() => {
-                    window.location.href = './pages/index.html'; 
+                    window.location.href = '../pages/index.html'; 
                 }, 1500);
 
             } 
             else {
-                view.showError(data.message || "An error occurred");
+                View.showError(data.message);
             }
         } catch (error) {
             // Postcondition Failure
-            view.showError("Connection failed. Server checking needed!");
+            View.showError("Server connection failed!");
         }
     });
 });
