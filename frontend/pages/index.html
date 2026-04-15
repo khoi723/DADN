@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SAIWS – Home</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/style.css"/>
-  <script type="module" src="js/Devices.js"></script>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <script type="module" src="/js/Devices.js"></script>
 </head>
-<body onload="page_Load()">
+<body>
 
 <!-- WATERING NEEDED NOTIFICATION ICON -->
 <div id="wateringNeededIcon" class="watering-needed-icon" title="Plants need watering">
@@ -52,7 +52,7 @@
         </svg>
       </button>
       <div id="profileDropdown" class="profile-dropdown">
-        <a href="pages/settings.html">
+        <a href="../pages/settings.html">
           <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
           View Profile
         </a>
@@ -61,7 +61,7 @@
           Settings
         </a>
         <div class="divider"></div>
-        <a href="login.html">
+        <a href="#" id="logoutBtn">
           <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
           Log out
         </a>
@@ -156,6 +156,6 @@
   </main>
 </div>
 
-<script src="js/main.js"></script>
+<script type="module" src="/js/main.js"></script>
 </body>
 </html>

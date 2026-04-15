@@ -1,4 +1,7 @@
+import AuthModel from '/models/AuthModel.js';
+
 // ── MODE SWITCHING (Home page) ──
+
 function selectMode(mode) {
   const autoCard    = document.getElementById('autoCard');
   const manualCard  = document.getElementById('manualCard');
@@ -77,7 +80,23 @@ window.showWateringNeededIcon = showWateringNeededIcon;
 window.hideWateringNeededIcon = hideWateringNeededIcon;
 
 // ── PROFILE DROPDOWN ──
+function initPage() {
+
+    if (!AuthModel.state.isLoggedIn) {
+        window.location.href = '/views/login.html';
+        return;
+    }
+}
+function handleLogout() {
+    AuthModel.clearAuth();
+    localStorage.removeItem('token'); 
+
+    window.location.href = '/views/login.html'; 
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  // Handle token checking
+  initPage();
   // ── AUTOMATIC MODE SETTINGS CHANGE ──
   const onCondition = document.getElementById('onCondition');
   const onValue = document.getElementById('onValue');
@@ -90,6 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (offValue) offValue.addEventListener('input', recheckMoisture);
   const profileBtn      = document.getElementById('profileBtn');
   const profileDropdown = document.getElementById('profileDropdown');
+  // Handle logout
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Ngăn trang web nhảy lên đầu do thẻ <a href="#">
+            handleLogout();
+        });
+  }
 
   if (profileBtn && profileDropdown) {
     profileBtn.addEventListener('click', (e) => {

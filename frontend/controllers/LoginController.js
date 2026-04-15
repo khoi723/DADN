@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Điều hướng sang Homepage
                 setTimeout(() => {
-                    window.location.href = '../pages/index.html'; 
+                    window.location.href = '/pages/index.html'; 
                 }, 1500);
 
             } 
