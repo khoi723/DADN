@@ -31,9 +31,6 @@ function checkMoistureCondition(moistureValue) {
 export function updateMotorStatus(status) {
     const motorStatusRef = child(dbRef, 'MOTOR/status');
     set(motorStatusRef, status)
-        .then(() => {
-            console.log('Motor status updated to:', status);
-        })
         .catch((error) => {
             console.error('Error updating motor status:', error);
         });

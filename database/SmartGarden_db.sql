@@ -28,6 +28,7 @@ CREATE TABLE Sensor_logs (
     device_id INT NOT NULL,
     soil_moisture FLOAT NOT NULL,
     temperature FLOAT,
+    humidity FLOAT,
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (device_id) REFERENCES Devices(ID) ON DELETE CASCADE
 );

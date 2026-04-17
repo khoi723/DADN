@@ -37,6 +37,7 @@ void loop() {
   } else {
     offMotor();
   }
+  delay(1000);
 }
 /* DHT11 */
 void readDHT11(int& temp, int& humi) {

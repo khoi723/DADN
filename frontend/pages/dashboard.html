@@ -11,10 +11,11 @@
   <style>
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 1fr 340px;
-      grid-template-rows: auto auto;
+      grid-template-columns: repeat(3, 1fr);
       gap: 22px;
+      margin-bottom: 30px;
     }
+    
     .dash-card {
       background: #fff;
       border-radius: 18px;
@@ -22,6 +23,7 @@
       padding: 24px 28px;
       box-shadow: var(--shadow);
     }
+    
     .dash-card-title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 1.1rem;
@@ -29,57 +31,65 @@
       color: var(--text-dark);
       margin-bottom: 20px;
     }
-    .card-moisture { grid-column: 1; grid-row: 1; }
-    .card-temp     { grid-column: 2; grid-row: 1; }
-    .card-water    { grid-column: 1 / -1; grid-row: 2; }
-    .donut-row {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      gap: 10px;
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
     }
-    .donut-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
+    
+    .stat-item {
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
     }
-    .donut-container {
-      position: relative;
-      width: 120px;
-      height: 120px;
+    
+    .stat-label {
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-weight: 600;
     }
-    .donut-label {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.1rem;
+    
+    .stat-value {
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--text-dark);
     }
-    .donut-caption {
-      font-size: 0.82rem;
-      color: var(--text-light);
-      font-weight: 500;
-      text-align: center;
-    }
-    .temp-container {
+    
+    .chart-container {
       position: relative;
-      height: 160px;
     }
+    
+    .card-moisture { grid-column: 1; grid-row: 1; }
+    .card-temp { grid-column: 2; grid-row: 1; }
+    .card-humidity { grid-column: 3; grid-row: 1; }
+    .card-water { grid-column: 1 / -1; grid-row: 2; }
+    
     .water-container {
       position: relative;
-      height: 220px;
+      height: 280px;
       width: 100%;
     }
-    @media (max-width: 900px) {
+    
+    @media (max-width: 1200px) {
+      .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+      .card-moisture { grid-column: 1; grid-row: 1; }
+      .card-temp { grid-column: 2; grid-row: 1; }
+      .card-humidity { grid-column: 1; grid-row: 2; }
+      .card-water { grid-column: 1 / -1; grid-row: 3; }
+    }
+    
+    @media (max-width: 768px) {
       .dashboard-grid { grid-template-columns: 1fr; }
       .card-moisture { grid-column: 1; grid-row: 1; }
-      .card-temp     { grid-column: 1; grid-row: 2; }
-      .card-water    { grid-column: 1; grid-row: 3; }
+      .card-temp { grid-column: 1; grid-row: 2; }
+      .card-humidity { grid-column: 1; grid-row: 3; }
+      .card-water { grid-column: 1; grid-row: 4; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -132,40 +142,85 @@
 
     <div class="dashboard-grid">
 
+      <!-- Moisture Stats -->
       <div class="dash-card card-moisture">
-        <div class="dash-card-title">Moisture</div>
-        <div class="donut-row">
-          <div class="donut-wrap">
-            <div class="donut-container">
-              <canvas id="chartTotal"></canvas>
-              <div class="donut-label">81%</div>
-            </div>
-            <div class="donut-caption">Total Moisture</div>
+        <div class="dash-card-title">Soil Moisture</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Current</div>
+            <div class="stat-value" id="moistureCurrent">--%</div>
           </div>
-          <div class="donut-wrap">
-            <div class="donut-container">
-              <canvas id="chartAvg"></canvas>
-              <div class="donut-label">22%</div>
-            </div>
-            <div class="donut-caption">Average Moisture</div>
+          <div class="stat-item">
+            <div class="stat-label">Average</div>
+            <div class="stat-value" id="moistureAvg">--%</div>
           </div>
-          <div class="donut-wrap">
-            <div class="donut-container">
-              <canvas id="chartOptimal"></canvas>
-              <div class="donut-label">62%</div>
-            </div>
-            <div class="donut-caption">Optimal Moisture</div>
+          <div class="stat-item">
+            <div class="stat-label">Max</div>
+            <div class="stat-value" id="moistureMax">--%</div>
           </div>
+          <div class="stat-item">
+            <div class="stat-label">Min</div>
+            <div class="stat-value" id="moistureMin">--%</div>
+          </div>
+        </div>
+        <div class="chart-container" style="position: relative; height: 200px; margin-top: 20px;">
+          <canvas id="chartMoisture"></canvas>
         </div>
       </div>
 
+      <!-- Temperature Stats -->
       <div class="dash-card card-temp">
         <div class="dash-card-title">Temperature</div>
-        <div class="temp-container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Current</div>
+            <div class="stat-value" id="tempCurrent">--°C</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Average</div>
+            <div class="stat-value" id="tempAvg">--°C</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Max</div>
+            <div class="stat-value" id="tempMax">--°C</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Min</div>
+            <div class="stat-value" id="tempMin">--°C</div>
+          </div>
+        </div>
+        <div class="chart-container" style="position: relative; height: 200px; margin-top: 20px;">
           <canvas id="chartTemp"></canvas>
         </div>
       </div>
 
+      <!-- Humidity Stats (if available) -->
+      <div class="dash-card card-humidity">
+        <div class="dash-card-title">Air Humidity</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Current</div>
+            <div class="stat-value" id="humidityCurrent">--%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Average</div>
+            <div class="stat-value" id="humidityAvg">--%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Max</div>
+            <div class="stat-value" id="humidityMax">--%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Min</div>
+            <div class="stat-value" id="humidityMin">--%</div>
+          </div>
+        </div>
+        <div class="chart-container" style="position: relative; height: 200px; margin-top: 20px;">
+          <canvas id="chartHumidity"></canvas>
+        </div>
+      </div>
+
+      <!-- Water Usage Chart -->
       <div class="dash-card card-water">
         <div class="dash-card-title">Water Usage</div>
         <div class="water-container">
@@ -179,55 +234,342 @@
 
 <script src="../js/main.js"></script>
 <script>
-  new Chart(document.getElementById('chartTotal'), {
-    type: 'doughnut',
-    data: { datasets: [{ data: [81, 19], backgroundColor: ['#e05555', '#f5c0c0'], borderWidth: 0, hoverOffset: 0 }] },
-    options: { cutout: '72%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 800 } }
-  });
-  new Chart(document.getElementById('chartAvg'), {
-    type: 'doughnut',
-    data: { datasets: [{ data: [22, 78], backgroundColor: ['#3a9e3b', '#c8e6c9'], borderWidth: 0, hoverOffset: 0 }] },
-    options: { cutout: '72%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 800 } }
-  });
-  new Chart(document.getElementById('chartOptimal'), {
-    type: 'doughnut',
-    data: { datasets: [{ data: [62, 38], backgroundColor: ['#7c6fc4', '#cdc9e8'], borderWidth: 0, hoverOffset: 0 }] },
-    options: { cutout: '72%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 800 } }
-  });
-  new Chart(document.getElementById('chartTemp'), {
-    type: 'line',
-    data: {
-      labels: ['8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00'],
-      datasets: [{ data: [20,22,25,30,36,34,30,28], borderColor: '#9b93d4', backgroundColor: 'rgba(155,147,212,0.18)', borderWidth: 2, pointRadius: 0, fill: true, tension: 0.4 }]
-    },
-    options: {
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } },
-        y: { min: 0, max: 40, ticks: { stepSize: 8, font: { size: 11 }, color: '#888' }, grid: { color: '#eee' } }
-      }
+  const charts = {};
+  let historicalData = []; // Cache dữ liệu lịch sử
+  const MAX_DATA_POINTS = 24; // Keep only last 24 points
+
+  // Format time
+  function formatTime(date) {
+    return date.getHours().toString().padStart(2, '0') + ':' + 
+           date.getMinutes().toString().padStart(2, '0');
+  }
+
+  // Calculate statistics
+  function calculateStats(data) {
+    if (!data || data.length === 0) return { min: 0, max: 0, avg: 0, current: 0 };
+    const sorted = [...data].sort((a, b) => a - b);
+    const sum = data.reduce((a, b) => a + b, 0);
+    return {
+      min: Math.round(sorted[0] * 10) / 10,
+      max: Math.round(sorted[sorted.length - 1] * 10) / 10,
+      avg: Math.round((sum / data.length) * 10) / 10,
+      current: Math.round(data[data.length - 1] * 10) / 10
+    };
+  }
+
+  // Update stat values WITHOUT rebuilding charts - very fast
+  function updateStatsUI(history) {
+    const moistures = history.map(h => h.soil_moisture).filter(m => m !== null);
+    const temps = history.map(h => h.temperature).filter(t => t !== null);
+    const humidities = history.map(h => h.humidity).filter(h => h !== null);
+
+    if (moistures.length > 0) {
+      const moistureStats = calculateStats(moistures);
+      document.getElementById('moistureCurrent').textContent = moistureStats.current + '%';
+      document.getElementById('moistureAvg').textContent = moistureStats.avg + '%';
+      document.getElementById('moistureMax').textContent = moistureStats.max + '%';
+      document.getElementById('moistureMin').textContent = moistureStats.min + '%';
     }
-  });
-  new Chart(document.getElementById('chartWater'), {
-    type: 'bar',
-    data: {
-      labels: ['14-2','21-2','28-2','7-3','14-3','21-3','28-3','4-4'],
-      datasets: [
-        { label: '2026', data: [245,230,210,225,250,245,235,240], backgroundColor: '#8b83d4', borderRadius: 4, borderSkipped: false, barPercentage: 0.55 },
-        { label: 'Target', data: [290,285,270,275,295,285,280,285], backgroundColor: 'rgba(139,131,212,0.2)', borderRadius: 4, borderSkipped: false, barPercentage: 0.55 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: true, position: 'bottom', labels: { filter: item => item.text === '2026', font: { size: 12 }, color: '#555', boxWidth: 14, boxHeight: 14 } }
-      },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } },
-        y: { min: 0, max: 300, ticks: { stepSize: 50, font: { size: 11 }, color: '#888' }, grid: { color: '#eee' } }
-      }
+
+    if (temps.length > 0) {
+      const tempStats = calculateStats(temps);
+      document.getElementById('tempCurrent').textContent = tempStats.current + '°C';
+      document.getElementById('tempAvg').textContent = tempStats.avg + '°C';
+      document.getElementById('tempMax').textContent = tempStats.max + '°C';
+      document.getElementById('tempMin').textContent = tempStats.min + '°C';
     }
+
+    if (humidities.length > 0) {
+      const humidityStats = calculateStats(humidities);
+      document.getElementById('humidityCurrent').textContent = humidityStats.current + '%';
+      document.getElementById('humidityAvg').textContent = humidityStats.avg + '%';
+      document.getElementById('humidityMax').textContent = humidityStats.max + '%';
+      document.getElementById('humidityMin').textContent = humidityStats.min + '%';
+    }
+  }
+
+  // Update chart data dynamically WITH smooth animations
+  function updateChartsData() {
+    
+    const moistures = historicalData.map(h => h.soil_moisture).filter(m => m !== null);
+    const temps = historicalData.map(h => h.temperature).filter(t => t !== null);
+    const humidities = historicalData.map(h => h.humidity).filter(h => h !== null);
+
+    const timeLabels = historicalData.map(h => {
+      const date = new Date(h.recorded_at);
+      return formatTime(date);
+    });
+
+    // Update Moisture chart data with smooth animation
+    if (charts.chartMoisture) {
+      charts.chartMoisture.data.labels = timeLabels;
+      charts.chartMoisture.data.datasets[0].data = moistures;
+      charts.chartMoisture.update('active'); // Smooth animation (300ms default)
+    }
+
+    // Update Temperature chart data with smooth animation
+    if (charts.chartTemp) {
+      charts.chartTemp.data.labels = timeLabels;
+      charts.chartTemp.data.datasets[0].data = temps;
+      charts.chartTemp.update('active');
+    }
+
+    // Update Humidity chart data with smooth animation
+    if (charts.chartHumidity && humidities.length > 0) {
+      charts.chartHumidity.data.labels = timeLabels;
+      charts.chartHumidity.data.datasets[0].data = humidities;
+      charts.chartHumidity.update('active');
+    }
+
+    // Update Water Usage chart with smooth animation
+    if (charts.chartWater) {
+      const dateLabels = [];
+      const waterByDate = {};
+      historicalData.forEach(h => {
+        const date = new Date(h.recorded_at);
+        const dateStr = (date.getDate()).toString().padStart(2, '0') + '-' + 
+                        ((date.getMonth() + 1)).toString().padStart(2, '0');
+        if (!dateLabels.includes(dateStr)) dateLabels.push(dateStr);
+        if (!waterByDate[dateStr]) waterByDate[dateStr] = [];
+        waterByDate[dateStr].push(h.soil_moisture);
+      });
+
+      const waterData = dateLabels.map(label => {
+        const values = waterByDate[label];
+        return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+      });
+
+      charts.chartWater.data.labels = dateLabels;
+      charts.chartWater.data.datasets[0].data = waterData.map(v => Math.round(v * 2.5));
+      charts.chartWater.update('active');
+    }
+  }
+
+  // Build all charts once (only called on initial load)
+  function buildCharts() {
+    
+    const moistures = historicalData.map(h => h.soil_moisture).filter(m => m !== null);
+    const temps = historicalData.map(h => h.temperature).filter(t => t !== null);
+    const humidities = historicalData.map(h => h.humidity).filter(h => h !== null);
+
+    const timeLabels = historicalData.map(h => {
+      const date = new Date(h.recorded_at);
+      return formatTime(date);
+    });
+
+    // Build Moisture chart
+    if (!charts.chartMoisture) {
+      charts.chartMoisture = new Chart(document.getElementById('chartMoisture'), {
+        type: 'line',
+        data: {
+          labels: timeLabels,
+          datasets: [{
+            label: 'Soil Moisture (%)',
+            data: moistures,
+            borderColor: '#3a9e3b',
+            backgroundColor: 'rgba(58, 158, 59, 0.08)',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointBackgroundColor: '#3a9e3b',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 400,
+            easing: 'easeInOutQuart'
+          },
+          plugins: { legend: { display: true, position: 'bottom', labels: { font: { size: 11 } } } },
+          scales: {
+            y: { min: 0, max: 100, ticks: { stepSize: 20, font: { size: 11 }, color: '#888' }, grid: { color: '#eee' } },
+            x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } }
+          }
+        }
+      });
+    }
+
+    // Build Temperature chart
+    if (!charts.chartTemp) {
+      charts.chartTemp = new Chart(document.getElementById('chartTemp'), {
+        type: 'line',
+        data: {
+          labels: timeLabels,
+          datasets: [{
+            label: 'Temperature (°C)',
+            data: temps,
+            borderColor: '#e05555',
+            backgroundColor: 'rgba(224, 85, 85, 0.08)',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointBackgroundColor: '#e05555',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 400,
+            easing: 'easeInOutQuart'
+          },
+          plugins: { legend: { display: true, position: 'bottom', labels: { font: { size: 11 } } } },
+          scales: {
+            y: { ticks: { stepSize: 5, font: { size: 11 }, color: '#888' }, grid: { color: '#eee' } },
+            x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } }
+          }
+        }
+      });
+    }
+
+    // Build Humidity chart
+    if (humidities.length > 0 && !charts.chartHumidity) {
+      charts.chartHumidity = new Chart(document.getElementById('chartHumidity'), {
+        type: 'line',
+        data: {
+          labels: timeLabels,
+          datasets: [{
+            label: 'Air Humidity (%)',
+            data: humidities,
+            borderColor: '#7c6fc4',
+            backgroundColor: 'rgba(124, 111, 196, 0.08)',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointBackgroundColor: '#7c6fc4',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 400,
+            easing: 'easeInOutQuart'
+          },
+          plugins: { legend: { display: true, position: 'bottom', labels: { font: { size: 11 } } } },
+          scales: {
+            y: { min: 0, max: 100, ticks: { stepSize: 20, font: { size: 11 }, color: '#888' }, grid: { color: '#eee' } },
+            x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } }
+          }
+        }
+      });
+    }
+
+    // Build Water Usage chart
+    const dateLabels = [];
+    const waterByDate = {};
+    historicalData.forEach(h => {
+      const date = new Date(h.recorded_at);
+      const dateStr = (date.getDate()).toString().padStart(2, '0') + '-' + 
+                      ((date.getMonth() + 1)).toString().padStart(2, '0');
+      if (!dateLabels.includes(dateStr)) dateLabels.push(dateStr);
+      if (!waterByDate[dateStr]) waterByDate[dateStr] = [];
+      waterByDate[dateStr].push(h.soil_moisture);
+    });
+
+    const waterData = dateLabels.map(label => {
+      const values = waterByDate[label];
+      return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+    });
+
+    if (!charts.chartWater) {
+      charts.chartWater = new Chart(document.getElementById('chartWater'), {
+        type: 'bar',
+        data: {
+          labels: dateLabels,
+          datasets: [{
+            label: 'Water Flow (L)',
+            data: waterData.map(v => Math.round(v * 2.5)),
+            backgroundColor: '#8b83d4',
+            borderRadius: 6,
+            borderSkipped: false,
+            barPercentage: 0.65
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 500,
+            easing: 'easeInOutQuart'
+          },
+          plugins: { legend: { display: true, position: 'bottom', labels: { font: { size: 11 } } } },
+          scales: {
+            y: { ticks: { stepSize: 50, font: { size: 11 }, color: '#888' }, grid: { color: '#eee' } },
+            x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } }
+          }
+        }
+      });
+    }
+  }
+
+  // Load initial data
+  async function loadInitialData() {
+    try {
+      const historyRes = await fetch('/api/sensor/history?limit=24');
+      const historyData = await historyRes.json();
+      
+      if (historyData.ok && historyData.history) {
+        historicalData = historyData.history;
+        updateStatsUI(historicalData);
+        buildCharts();
+      }
+    } catch (error) {
+    }
+  }
+
+  // Connect to real-time stream
+  function connectStream() {
+    const eventSource = new EventSource('/api/sensor/stream');
+
+    eventSource.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        
+        if (message.type === 'batch' && message.records) {
+          // Append new records to historical data
+          historicalData.push(...message.records);
+          
+          // Keep only last MAX_DATA_POINTS records
+          if (historicalData.length > MAX_DATA_POINTS) {
+            historicalData = historicalData.slice(historicalData.length - MAX_DATA_POINTS);
+          }
+          
+          // Update ONLY stats values (instant, no animation)
+          updateStatsUI(historicalData);
+          
+          // Update charts data dynamically (no rebuild, no animation)
+          updateChartsData();
+          
+        } else if (message.type === 'connected') {
+        }
+      } catch (err) {
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      eventSource.close();
+      setTimeout(connectStream, 5000);
+    };
+  }
+
+  // Load data when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    
+    // Initial load
+    loadInitialData();
+    
+    // Connect to real-time stream
+    connectStream();
+    
+    // Full refresh every 5 minutes as safety net
+    setInterval(() => {
+      loadInitialData();
+    }, 300000);
   });
 </script>
 </body>
