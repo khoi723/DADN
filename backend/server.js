@@ -46,6 +46,60 @@ async function getConnection() {
   });
 }
 
+async function getDefaultDeviceId(conn) {
+  const preferredDeviceId = Number(process.env.DEVICE_ID || 1);
+  if (Number.isInteger(preferredDeviceId) && preferredDeviceId > 0) {
+    const [preferred] = await conn.execute(
+      'SELECT ID FROM Devices WHERE ID = ? LIMIT 1',
+      [preferredDeviceId]
+    );
+    if (preferred.length > 0) {
+      return preferred[0].ID;
+    }
+  }
+
+  const [fallback] = await conn.execute('SELECT ID FROM Devices ORDER BY ID ASC LIMIT 1');
+  if (fallback.length > 0) {
+    return fallback[0].ID;
+  }
+
+  return 1;
+}
+
+async function recordPumpAction(conn, deviceId, isOn, triggerType) {
+  if (isOn) {
+    const [openRows] = await conn.execute(
+      `SELECT ID
+       FROM Pump_actions
+       WHERE device_id = ? AND end_at IS NULL
+       ORDER BY start_at DESC
+       LIMIT 1`,
+      [deviceId]
+    );
+
+    if (openRows.length === 0) {
+      await conn.execute(
+        `INSERT INTO Pump_actions (device_id, pump_status, trigger_type, start_at)
+         VALUES (?, 'on', ?, NOW())`,
+        [deviceId, triggerType]
+      );
+    }
+
+    return;
+  }
+
+  await conn.execute(
+    `UPDATE Pump_actions
+     SET end_at = NOW(),
+         pump_status = 'off',
+         trigger_type = ?
+     WHERE device_id = ? AND end_at IS NULL
+     ORDER BY start_at DESC
+     LIMIT 1`,
+    [triggerType, deviceId]
+  );
+}
+
 const profileDB = {
   execute: async (query, params = []) => {
     let conn;
@@ -564,20 +618,31 @@ app.get('/api/motor/state', (req, res) => {
 });
 
 // API: Manually control motor (override auto)
-app.post('/api/motor/control', express.json(), (req, res) => {
+app.post('/api/motor/control', express.json(), async (req, res) => {
+  let conn;
   try {
-    const { action } = req.body; // 'on' or 'off'
+    const { action, triggerType } = req.body; // 'on' or 'off'
+    const manualTrigger = typeof triggerType === 'string' && triggerType.trim()
+      ? triggerType.trim()
+      : 'manual';
+    conn = await getConnection();
+    const deviceId = await getDefaultDeviceId(conn);
+
     if (action === 'on' || action === 1) {
       updateFirebaseMotorStatus(true);
+      await recordPumpAction(conn, deviceId, true, manualTrigger);
       res.json({ ok: true, message: 'Motor turned ON', status: 1 });
     } else if (action === 'off' || action === 0) {
       updateFirebaseMotorStatus(false);
+      await recordPumpAction(conn, deviceId, false, manualTrigger);
       res.json({ ok: true, message: 'Motor turned OFF', status: 0 });
     } else {
       res.status(400).json({ ok: false, error: 'Invalid action' });
     }
   } catch (error) {
     res.status(400).json({ ok: false, error: error.message });
+  } finally {
+    if (conn) await conn.end();
   }
 });
 

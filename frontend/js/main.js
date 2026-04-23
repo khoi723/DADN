@@ -13,6 +13,9 @@ function t(key) {
     : key;
 }
 
+const MANUAL_TIMER_STORAGE_KEY = 'saiws.manual.turnoff';
+let manualAutoOffTimer = null;
+
 // Save motor settings to server
 async function saveMotorSettings() {
   try {
@@ -37,6 +40,188 @@ async function saveMotorSettings() {
 
 // Debounced wrapper to avoid frequent calls
 const scheduleSaveMotorSettings = debounce(saveMotorSettings, 700);
+
+function clearManualAutoOffTimer() {
+  if (manualAutoOffTimer) {
+    clearTimeout(manualAutoOffTimer);
+    manualAutoOffTimer = null;
+  }
+}
+
+function getManualTurnOffConfig() {
+  const valueEl = document.getElementById('turnOffAfterValue');
+  const unitEl = document.getElementById('turnOffAfterUnit');
+  const value = Math.max(1, Math.min(720, parseInt(valueEl?.value || '30', 10) || 30));
+  const unit = unitEl?.value || 'minutes';
+  return { value, unit };
+}
+
+function getManualTurnOffMs() {
+  const cfg = getManualTurnOffConfig();
+  if (cfg.unit === 'never') return null;
+  const multiplier = cfg.unit === 'hours' ? 60 * 60 * 1000 : 60 * 1000;
+  return cfg.value * multiplier;
+}
+
+function persistManualTurnOffConfig() {
+  const cfg = getManualTurnOffConfig();
+  localStorage.setItem(MANUAL_TIMER_STORAGE_KEY, JSON.stringify(cfg));
+}
+
+function hydrateManualTurnOffConfig() {
+  const valueEl = document.getElementById('turnOffAfterValue');
+  const unitEl = document.getElementById('turnOffAfterUnit');
+  if (!valueEl || !unitEl) return;
+
+  try {
+    const raw = localStorage.getItem(MANUAL_TIMER_STORAGE_KEY);
+    if (!raw) return;
+    const cfg = JSON.parse(raw);
+    if (Number.isFinite(Number(cfg?.value))) {
+      valueEl.value = String(Math.max(1, Math.min(720, Number(cfg.value))));
+    }
+    if (cfg?.unit && ['minutes', 'hours', 'never'].includes(cfg.unit)) {
+      unitEl.value = cfg.unit;
+    }
+  } catch (err) {
+    // Ignore invalid stored state.
+  }
+}
+
+function syncTurnOffInputsState() {
+  const valueEl = document.getElementById('turnOffAfterValue');
+  const unitEl = document.getElementById('turnOffAfterUnit');
+  const decBtn = document.getElementById('turnOffDecrease');
+  const incBtn = document.getElementById('turnOffIncrease');
+  if (!valueEl || !unitEl) return;
+
+  const disabled = unitEl.value === 'never';
+  valueEl.disabled = disabled;
+  if (decBtn) decBtn.disabled = disabled;
+  if (incBtn) incBtn.disabled = disabled;
+}
+
+async function setManualPumpState(isOn) {
+  try {
+    const action = isOn ? 'on' : 'off';
+    const res = await fetch('/api/motor/control', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, triggerType: 'manual' })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      throw new Error(data.error || 'Failed to control motor');
+    }
+
+    if (window.setMotorRunningState) {
+      window.setMotorRunningState(isOn);
+    }
+    return true;
+  } catch (err) {
+    console.error('Error controlling motor manually:', err);
+    return false;
+  }
+}
+
+function scheduleManualAutoOffIfNeeded() {
+  clearManualAutoOffTimer();
+  const pumpToggle = document.getElementById('pumpToggle');
+  if (!pumpToggle || !pumpToggle.checked) return;
+
+  const delay = getManualTurnOffMs();
+  if (!delay) return;
+
+  manualAutoOffTimer = setTimeout(async () => {
+    const ok = await setManualPumpState(false);
+    if (ok) {
+      pumpToggle.checked = false;
+      clearManualAutoOffTimer();
+    }
+  }, delay);
+}
+
+function bindManualTurnOffControls() {
+  const valueEl = document.getElementById('turnOffAfterValue');
+  const unitEl = document.getElementById('turnOffAfterUnit');
+  const decBtn = document.getElementById('turnOffDecrease');
+  const incBtn = document.getElementById('turnOffIncrease');
+  const pumpToggle = document.getElementById('pumpToggle');
+  if (!valueEl || !unitEl || !pumpToggle) return;
+
+  const clampValue = () => {
+    const n = parseInt(valueEl.value || '30', 10) || 30;
+    valueEl.value = String(Math.max(1, Math.min(720, n)));
+  };
+
+  const onConfigChanged = () => {
+    clampValue();
+    syncTurnOffInputsState();
+    persistManualTurnOffConfig();
+    if (pumpToggle.checked) {
+      scheduleManualAutoOffIfNeeded();
+    }
+  };
+
+  valueEl.addEventListener('input', onConfigChanged);
+  unitEl.addEventListener('change', onConfigChanged);
+
+  if (decBtn) {
+    decBtn.addEventListener('click', () => {
+      valueEl.value = String(Math.max(1, (parseInt(valueEl.value || '30', 10) || 30) - 1));
+      onConfigChanged();
+    });
+  }
+
+  if (incBtn) {
+    incBtn.addEventListener('click', () => {
+      valueEl.value = String(Math.min(720, (parseInt(valueEl.value || '30', 10) || 30) + 1));
+      onConfigChanged();
+    });
+  }
+
+  syncTurnOffInputsState();
+}
+
+async function syncPumpToggleFromServer() {
+  const pumpToggle = document.getElementById('pumpToggle');
+  if (!pumpToggle) return;
+
+  try {
+    const res = await fetch('/api/motor/status', { cache: 'no-store' });
+    const data = await res.json();
+    const isRunning = Boolean(data?.motor && data.motor.status === 'running');
+    pumpToggle.checked = isRunning;
+    if (window.setMotorRunningState) {
+      window.setMotorRunningState(isRunning);
+    }
+    if (isRunning) {
+      scheduleManualAutoOffIfNeeded();
+    }
+  } catch (err) {
+    console.error('Error syncing motor status:', err);
+  }
+}
+
+function bindManualPumpToggle() {
+  const pumpToggle = document.getElementById('pumpToggle');
+  if (!pumpToggle) return;
+
+  pumpToggle.addEventListener('change', async () => {
+    const nextState = pumpToggle.checked;
+    const ok = await setManualPumpState(nextState);
+    if (!ok) {
+      pumpToggle.checked = !nextState;
+      return;
+    }
+
+    if (nextState) {
+      scheduleManualAutoOffIfNeeded();
+    } else {
+      clearManualAutoOffTimer();
+    }
+  });
+}
 
 // Load motor settings from server and apply to UI
 async function loadMotorSettings() {
@@ -80,6 +265,7 @@ function selectMode(mode) {
     manualCard.classList.remove('selected');
     manualCard.classList.add('disabled');
     manualRadio.classList.remove('active');
+    clearManualAutoOffTimer();
   } else {
     manualCard.classList.add('selected');
     manualCard.classList.remove('disabled');
@@ -210,6 +396,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   // Load current motor settings from server on page load
+  hydrateManualTurnOffConfig();
+  bindManualTurnOffControls();
+  bindManualPumpToggle();
+  syncPumpToggleFromServer();
   loadMotorSettings();
 
   // Close moisture warning modal when user presses Escape

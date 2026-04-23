@@ -150,13 +150,19 @@
 
             <div class="manual-row">
               <label data-i18n="home_turn_off_after">Turn off after</label>
-              <select class="select-pill" id="turnOffAfter">
-                <option data-i18n="option_15_minutes">15 minutes</option>
-                <option selected data-i18n="option_30_minutes">30 minutes</option>
-                <option data-i18n="option_1_hour">1 hour</option>
-                <option data-i18n="option_2_hours">2 hours</option>
-                <option data-i18n="option_never">Never</option>
-              </select>
+              <div class="turnoff-control" id="turnOffAfterControl">
+                <button type="button" class="step-btn" id="turnOffDecrease"
+                  aria-label="Decrease turn off time">&#8722;</button>
+                <input class="percent-pill turnoff-input" type="number" id="turnOffAfterValue" value="30" min="1"
+                  max="720" step="1" />
+                <select class="select-pill turnoff-unit" id="turnOffAfterUnit">
+                  <option value="minutes" selected data-i18n="unit_minutes">minutes</option>
+                  <option value="hours" data-i18n="unit_hours">hours</option>
+                  <option value="never" data-i18n="option_never">Never</option>
+                </select>
+                <button type="button" class="step-btn" id="turnOffIncrease"
+                  aria-label="Increase turn off time">+</button>
+              </div>
             </div>
           </div>
         </div>

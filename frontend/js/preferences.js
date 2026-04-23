@@ -36,6 +36,8 @@
             option_1_hour: '1 hour',
             option_2_hours: '2 hours',
             option_never: 'Never',
+            unit_minutes: 'minutes',
+            unit_hours: 'hours',
             condition_above: 'above',
             condition_below: 'below',
 
@@ -144,6 +146,8 @@
             option_1_hour: '1 giờ',
             option_2_hours: '2 giờ',
             option_never: 'Không bao giờ',
+            unit_minutes: 'phút',
+            unit_hours: 'giờ',
             condition_above: 'lớn hơn',
             condition_below: 'nhỏ hơn',
 

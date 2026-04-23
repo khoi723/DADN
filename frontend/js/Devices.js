@@ -10,6 +10,10 @@ let hasTriggeredOverMoistureWarning = false;
 let hasShownWateringNeeded = false;
 let isMotorRunning = false;
 
+function isAutoModeActive() {
+    return document.getElementById('autoCard')?.classList.contains('selected') ?? true;
+}
+
 function t(key) {
     return window.SAIWS_PREFS && typeof window.SAIWS_PREFS.t === 'function'
         ? window.SAIWS_PREFS.t(key)
@@ -59,9 +63,10 @@ export function stopWatering() {
 }
 export function updateMoistureWarning(moistureValue) {
     const { needsWatering, isOverMoisture } = checkMoistureCondition(moistureValue);
+    const autoMode = isAutoModeActive();
 
     if (isOverMoisture) {
-        // Moisture reached upper limit - STOP watering
+        // Moisture reached upper limit - stop pump for safety, regardless of mode.
         if (isMotorRunning) {
             stopWatering();
             isMotorRunning = false;
@@ -80,12 +85,17 @@ export function updateMoistureWarning(moistureValue) {
             hasTriggeredOverMoistureWarning = true;
         }
     } else if (needsWatering) {
-        // Moisture below lower limit - START watering
-        if (!isMotorRunning) {
+        // Moisture below lower limit - auto mode starts watering, manual mode only shows icon.
+        if (autoMode && !isMotorRunning) {
             startWatering();
             isMotorRunning = true;
             if (window.showWateringNeededIcon) window.showWateringNeededIcon(moistureValue);
             hasShownWateringNeeded = true;
+        } else if (!autoMode) {
+            if (window.showWateringNeededIcon && !hasShownWateringNeeded) {
+                window.showWateringNeededIcon(moistureValue);
+                hasShownWateringNeeded = true;
+            }
         }
         // Clear warning if it was showing
         if (hasTriggeredOverMoistureWarning) {
@@ -125,6 +135,19 @@ export function page_Load() {
             }
         });
     });
+
+    onValue(child(dbRef, 'MOTOR/status'), (snapshot) => {
+        const running = Number(snapshot.val()) === 1;
+        isMotorRunning = running;
+        const pumpToggle = document.getElementById('pumpToggle');
+        if (pumpToggle) {
+            pumpToggle.checked = running;
+        }
+    });
+}
+
+export function setMotorRunningState(running) {
+    isMotorRunning = Boolean(running);
 }
 
 // Make functions accessible globally
@@ -133,3 +156,4 @@ window.updateMoistureWarning = updateMoistureWarning;
 window.updateMotorStatus = updateMotorStatus;
 window.startWatering = startWatering;
 window.stopWatering = stopWatering;
+window.setMotorRunningState = setMotorRunningState;

@@ -137,16 +137,30 @@ async function handleMotorStatusChange(status) {
     const deviceId = await getOrCreateDeviceId(conn);
 
     if (status === 1) {
-      // Motor started - insert new record with start_at
-      await conn.execute(
-        `INSERT INTO Pump_actions (device_id, start_at) VALUES (?, NOW())`,
+      // Motor started - insert only when there is no active session.
+      const [openRows] = await conn.execute(
+        `SELECT ID
+         FROM Pump_actions
+         WHERE device_id = ? AND end_at IS NULL
+         ORDER BY start_at DESC
+         LIMIT 1`,
         [deviceId]
       );
+
+      if (openRows.length === 0) {
+        await conn.execute(
+          `INSERT INTO Pump_actions (device_id, pump_status, trigger_type, start_at)
+           VALUES (?, 'on', 'firebase-sync', NOW())`,
+          [deviceId]
+        );
+      }
     } else if (status === 0) {
       // Motor stopped - update latest record with end_at
       await conn.execute(
         `UPDATE Pump_actions 
-         SET end_at = NOW() 
+         SET end_at = NOW(),
+             pump_status = 'off',
+             trigger_type = 'firebase-sync'
          WHERE device_id = ? AND end_at IS NULL
          ORDER BY start_at DESC 
          LIMIT 1`,

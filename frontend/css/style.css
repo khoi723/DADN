@@ -349,6 +349,41 @@ body {
   font-weight: 500;
 }
 
+.turnoff-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.turnoff-input {
+  width: 82px;
+  padding: 6px 10px;
+}
+
+.turnoff-unit {
+  min-width: 120px;
+}
+
+.step-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1.5px solid var(--input-border);
+  background: var(--surface);
+  color: var(--text-dark);
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.step-btn:disabled,
+.turnoff-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ── TOGGLE SWITCH ── */
 .toggle-wrap {
   display: flex;
