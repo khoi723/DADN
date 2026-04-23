@@ -1,19 +1,25 @@
 // Debounce helper
 function debounce(fn, wait) {
   let t;
-  return function(...args) {
+  return function (...args) {
     clearTimeout(t);
     t = setTimeout(() => fn.apply(this, args), wait);
   };
+}
+
+function t(key) {
+  return window.SAIWS_PREFS && typeof window.SAIWS_PREFS.t === 'function'
+    ? window.SAIWS_PREFS.t(key)
+    : key;
 }
 
 // Save motor settings to server
 async function saveMotorSettings() {
   try {
     const onCondition = document.getElementById('onCondition')?.value || 'above';
-    const onValue = parseFloat(document.getElementById('onValue')?.value || 40);
+    const onValue = parseFloat(document.getElementById('onValue')?.value || 30);
     const offCondition = document.getElementById('offCondition')?.value || 'below';
-    const offValue = parseFloat(document.getElementById('offValue')?.value || 55);
+    const offValue = parseFloat(document.getElementById('offValue')?.value || 40);
     const enabled = document.getElementById('autoCard')?.classList.contains('selected') ?? true;
 
     const res = await fetch('/api/motor/settings', {
@@ -59,9 +65,9 @@ async function loadMotorSettings() {
 
 // ── MODE SWITCHING (Home page) ──
 function selectMode(mode) {
-  const autoCard    = document.getElementById('autoCard');
-  const manualCard  = document.getElementById('manualCard');
-  const autoRadio   = document.getElementById('autoRadio');
+  const autoCard = document.getElementById('autoCard');
+  const manualCard = document.getElementById('manualCard');
+  const autoRadio = document.getElementById('autoRadio');
   const manualRadio = document.getElementById('manualRadio');
 
   if (!autoCard || !manualCard) return;
@@ -106,14 +112,16 @@ function hideWateringNeededIcon() {
 function showMoistureWarning(currentMoisture, message) {
   const modal = document.getElementById('moistureWarningModal');
   const onCondition = document.getElementById('onCondition')?.value || 'above';
-  const onValue = document.getElementById('onValue')?.value || '40';
+  const onValue = document.getElementById('onValue')?.value || '30';
   const offCondition = document.getElementById('offCondition')?.value || 'below';
-  const offValue = document.getElementById('offValue')?.value || '55';
-  
+  const offValue = document.getElementById('offValue')?.value || '40';
+  const onConditionLabel = t(onCondition === 'above' ? 'condition_above' : 'condition_below');
+  const offConditionLabel = t(offCondition === 'above' ? 'condition_above' : 'condition_below');
+
   document.getElementById('currentMoisture').innerText = currentMoisture;
   document.getElementById('moistureWarningText').innerText = message;
-  document.getElementById('configuredRange').innerText = `${onCondition} ${onValue}% / ${offCondition} ${offValue}%`;
-  
+  document.getElementById('configuredRange').innerText = `${onConditionLabel} ${onValue}% / ${offConditionLabel} ${offValue}%`;
+
   modal.style.display = 'flex';
 }
 
@@ -144,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const onValue = document.getElementById('onValue');
   const offCondition = document.getElementById('offCondition');
   const offValue = document.getElementById('offValue');
-  
+
   if (onCondition) onCondition.addEventListener('change', recheckMoisture);
   if (onValue) onValue.addEventListener('input', recheckMoisture);
   if (offCondition) offCondition.addEventListener('change', recheckMoisture);
@@ -154,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (onValue) onValue.addEventListener('input', scheduleSaveMotorSettings);
   if (offCondition) offCondition.addEventListener('change', scheduleSaveMotorSettings);
   if (offValue) offValue.addEventListener('input', scheduleSaveMotorSettings);
-  const profileBtn      = document.getElementById('profileBtn');
+  const profileBtn = document.getElementById('profileBtn');
   const profileDropdown = document.getElementById('profileDropdown');
 
   if (profileBtn && profileDropdown) {
@@ -173,6 +181,24 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
     });
   }
+
+  // Handle logout consistently across pages.
+  const logoutLinks = document.querySelectorAll('[data-logout]');
+  logoutLinks.forEach((logoutLink) => {
+    logoutLink.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      // Clear common client-side auth storage keys.
+      localStorage.removeItem('token');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('jwt');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('jwt');
+
+      window.location.assign('/views/login.html');
+    });
+  });
 
   // ── ACTIVE SIDEBAR LINK ──
   const links = document.querySelectorAll('.sidebar a');

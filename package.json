@@ -2,13 +2,13 @@
   "name": "dadn",
   "version": "1.0.0",
   "description": "Smart Automatic Irrigation Web System",
-  "main": "server.js",
+  "main": "backend/server.js",
   "scripts": {
-    "start": "concurrently \"node server.js\" \"node firebase-sync.js\"",
-    "server": "node server.js",
-    "firebase-sync": "node firebase-sync.js",
-    "check-db": "node check-db.js",
-    "seed-irrigation": "node seed_irrigation_demo.js",
+    "start": "npm run db:init && concurrently \"node backend/server.js\" \"node backend/firebase-sync.js\"",
+    "server": "node backend/server.js",
+    "firebase-sync": "node backend/firebase-sync.js",
+    "db:init": "node backend/scripts/init-db.js",
+    "db:clean-test": "node backend/scripts/clean-test-data.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,6 +17,7 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.20.0"
   },
   "devDependencies": {

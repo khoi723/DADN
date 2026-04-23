@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAIWS – Profile</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/preferences.js"></script>
+  <style>
+    .status-box {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.92rem;
+      margin-bottom: 20px;
+      border: 1px solid transparent;
+      display: none;
+    }
+
+    .status-box.show {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .status-message {
+      flex: 1;
+    }
+
+    .status-close {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 1.15rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 6px;
+    }
+
+    .status-close:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    .status-box.success {
+      background: #eaf7ea;
+      color: #216b22;
+      border-color: #b9dfba;
+    }
+
+    .status-box.error {
+      background: #fdecec;
+      color: #9c2626;
+      border-color: #f3b9b9;
+    }
+
+    .status-box.warning {
+      background: #fff6df;
+      color: #7a5a06;
+      border-color: #f0dda3;
+    }
+
+    .profile-panel {
+      background: var(--surface);
+      border-radius: 18px;
+      border: 2px solid var(--card-border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .profile-row {
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .profile-row:last-child {
+      border-bottom: 0;
+    }
+
+    .profile-label {
+      color: var(--text-dark);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .profile-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+
+    .profile-input,
+    .profile-select {
+      border: 1.5px solid var(--input-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      min-width: 220px;
+      color: var(--text-dark);
+      background: var(--surface);
+    }
+
+    .profile-input:focus,
+    .profile-select:focus {
+      outline: none;
+      border-color: var(--green-dark);
+    }
+
+    .profile-note {
+      color: var(--text-light);
+      font-size: 0.86rem;
+      width: 100%;
+    }
+
+    .save-btn,
+    .reload-btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: opacity 0.15s;
+    }
+
+    .save-btn {
+      background: var(--green-dark);
+      color: #fff;
+      min-width: 74px;
+    }
+
+    .reload-btn {
+      background: #1a2e1a;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .save-btn:hover,
+    .reload-btn:hover {
+      opacity: 0.9;
+    }
+
+    @media (max-width: 880px) {
+      .profile-row {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-input,
+      .profile-select {
+        min-width: 100%;
+        width: 100%;
+      }
+
+      .save-btn {
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <span class="navbar-brand">SAIWS</span>
+    <div class="navbar-icons">
+      <div class="profile-wrap">
+        <button id="profileBtn" title="Profile" data-i18n-title="user_menu_title">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+          </svg>
+        </button>
+        <div id="profileDropdown" class="profile-dropdown">
+          <a href="profile.html" class="active">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+            </svg>
+            <span data-i18n="nav_view_profile">View Profile</span>
+          </a>
+          <div class="divider"></div>
+          <a href="/views/login.html" data-logout>
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+            </svg>
+            <span data-i18n="nav_logout">Log out</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <a href="../index.html" data-i18n="nav_home">Home</a>
+      <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+      <a href="history.html" data-i18n="nav_history">History</a>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <div class="page-header">
+        <h1 class="page-title" data-i18n="profile_title">Profile</h1>
+      </div>
+
+      <button id="reloadProfileBtn" class="reload-btn" type="button" data-i18n="profile_reload">Reload Profile</button>
+      <div id="profileStatus" class="status-box"></div>
+
+      <section class="profile-panel">
+        <form id="usernameForm" class="profile-row">
+          <label class="profile-label" for="newUsername" data-i18n="profile_username">Username</label>
+          <div class="profile-control">
+            <input id="newUsername" class="profile-input" type="text" placeholder="Enter new username"
+              data-i18n-placeholder="profile_placeholder_new_username" required />
+          </div>
+          <button class="save-btn" type="submit" data-i18n="profile_save">Save</button>
+        </form>
+
+        <form id="emailForm" class="profile-row">
+          <label class="profile-label" for="newEmail" data-i18n="profile_email">Email</label>
+          <div class="profile-control">
+            <input id="newEmail" class="profile-input" type="email" placeholder="Enter new email"
+              data-i18n-placeholder="profile_placeholder_new_email" required />
+          </div>
+          <button class="save-btn" type="submit" data-i18n="profile_save">Save</button>
+        </form>
+
+        <form id="passwordForm" class="profile-row">
+          <label class="profile-label" for="oldPassword" data-i18n="profile_password">Password</label>
+          <div class="profile-control">
+            <input id="oldPassword" class="profile-input" type="password" placeholder="Old password"
+              data-i18n-placeholder="profile_placeholder_old_password" required />
+            <input id="newPassword" class="profile-input" type="password" placeholder="New password"
+              data-i18n-placeholder="profile_placeholder_new_password" required />
+            <span class="profile-note" data-i18n="profile_password_note">New password must be at least 6
+              characters.</span>
+          </div>
+          <button class="save-btn" type="submit" data-i18n="profile_save">Save</button>
+        </form>
+
+        <form id="languageForm" class="profile-row">
+          <label class="profile-label" for="language" data-i18n="profile_language">Language</label>
+          <div class="profile-control">
+            <select id="language" class="profile-select" required>
+              <option value="en" data-i18n="language_en">English (en)</option>
+              <option value="vi" data-i18n="language_vi">Vietnamese (vi)</option>
+            </select>
+          </div>
+          <button class="save-btn" type="submit" data-i18n="profile_save">Save</button>
+        </form>
+
+        <form id="themeForm" class="profile-row">
+          <label class="profile-label" for="theme" data-i18n="profile_theme">Theme</label>
+          <div class="profile-control">
+            <select id="theme" class="profile-select" required>
+              <option value="light" data-i18n="theme_light">Light</option>
+              <option value="dark" data-i18n="theme_dark">Dark</option>
+            </select>
+          </div>
+          <button class="save-btn" type="submit" data-i18n="profile_save">Save</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    function t(key) {
+      return window.SAIWS_PREFS && typeof window.SAIWS_PREFS.t === 'function'
+        ? window.SAIWS_PREFS.t(key)
+        : key;
+    }
+
+    function getAuthToken() {
+      return localStorage.getItem('token') ||
+        localStorage.getItem('authToken') ||
+        localStorage.getItem('jwt') ||
+        sessionStorage.getItem('token') ||
+        sessionStorage.getItem('authToken') ||
+        sessionStorage.getItem('jwt') ||
+        '';
+    }
+
+    function buildHeaders(includeJson) {
+      const headers = {};
+      if (includeJson) {
+        headers['Content-Type'] = 'application/json';
+      }
+
+      const token = getAuthToken();
+      if (token) {
+        headers.Authorization = 'Bearer ' + token;
+      }
+
+      return headers;
+    }
+
+    function showStatus(message, type) {
+      const box = document.getElementById('profileStatus');
+      const msg = document.createElement('span');
+      msg.className = 'status-message';
+      msg.textContent = message;
+
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'status-close';
+      close.textContent = '×';
+      close.title = t('profile_close_status');
+      close.setAttribute('aria-label', t('profile_close_status'));
+      close.addEventListener('click', hideStatus);
+
+      box.textContent = '';
+      box.appendChild(msg);
+      box.appendChild(close);
+      box.className = 'status-box show ' + type;
+    }
+
+    function hideStatus() {
+      const box = document.getElementById('profileStatus');
+      box.className = 'status-box';
+      box.textContent = '';
+    }
+
+    async function callProfileApi(path, method, body) {
+      const options = {
+        method,
+        headers: buildHeaders(Boolean(body))
+      };
+
+      if (body) {
+        options.body = JSON.stringify(body);
+      }
+
+      const response = await fetch(path, options);
+
+      let payload = {};
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        payload = await response.json();
+      } else {
+        payload = { message: await response.text() };
+      }
+
+      if (!response.ok) {
+        throw new Error(payload.message || 'Request failed (' + response.status + ')');
+      }
+
+      return payload;
+    }
+
+    async function loadProfile() {
+      try {
+        const data = await callProfileApi('/profile', 'GET');
+        document.getElementById('newUsername').value = data.username || '';
+        document.getElementById('newEmail').value = data.email || '';
+        document.getElementById('language').value = data.language || 'en';
+        document.getElementById('theme').value = data.theme || 'light';
+        if (window.SAIWS_PREFS) {
+          window.SAIWS_PREFS.setLanguage(data.language || 'en');
+          window.SAIWS_PREFS.setTheme(data.theme || 'light');
+        }
+        showStatus(t('profile_loaded_success'), 'success');
+      } catch (error) {
+        showStatus(error.message, 'error');
+      }
+    }
+
+    async function saveUsername(event) {
+      event.preventDefault();
+      try {
+        const newUsername = document.getElementById('newUsername').value.trim();
+        await callProfileApi('/profile/username', 'PUT', { newUsername: newUsername });
+        showStatus(t('profile_username_updated'), 'success');
+      } catch (error) {
+        showStatus(error.message, 'error');
+      }
+    }
+
+    async function saveEmail(event) {
+      event.preventDefault();
+      try {
+        const newEmail = document.getElementById('newEmail').value.trim();
+        await callProfileApi('/profile/email', 'PUT', { newEmail: newEmail });
+        showStatus(t('profile_email_updated'), 'success');
+      } catch (error) {
+        showStatus(error.message, 'error');
+      }
+    }
+
+    async function savePassword(event) {
+      event.preventDefault();
+      try {
+        const oldPassword = document.getElementById('oldPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        await callProfileApi('/profile/password', 'PUT', { oldPassword: oldPassword, newPassword: newPassword });
+        document.getElementById('oldPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        showStatus(t('profile_password_updated'), 'success');
+      } catch (error) {
+        showStatus(error.message, 'error');
+      }
+    }
+
+    async function saveLanguage(event) {
+      event.preventDefault();
+      try {
+        const language = document.getElementById('language').value;
+        await callProfileApi('/profile/language', 'PUT', { language: language });
+        if (window.SAIWS_PREFS) {
+          window.SAIWS_PREFS.setLanguage(language);
+        }
+        showStatus(t('profile_language_updated'), 'success');
+      } catch (error) {
+        showStatus(error.message, 'error');
+      }
+    }
+
+    async function saveTheme(event) {
+      event.preventDefault();
+      try {
+        const theme = document.getElementById('theme').value;
+        await callProfileApi('/profile/theme', 'PUT', { theme: theme });
+        if (window.SAIWS_PREFS) {
+          window.SAIWS_PREFS.setTheme(theme);
+        }
+        showStatus(t('profile_theme_updated'), 'success');
+      } catch (error) {
+        showStatus(error.message, 'error');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('reloadProfileBtn').addEventListener('click', loadProfile);
+      document.getElementById('usernameForm').addEventListener('submit', saveUsername);
+      document.getElementById('emailForm').addEventListener('submit', saveEmail);
+      document.getElementById('passwordForm').addEventListener('submit', savePassword);
+      document.getElementById('languageForm').addEventListener('submit', saveLanguage);
+      document.getElementById('themeForm').addEventListener('submit', saveTheme);
+
+      if (!getAuthToken()) {
+        showStatus(t('profile_no_token'), 'warning');
+      }
+
+      loadProfile();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,53 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SAIWS – Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <script src="../js/preferences.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; }
-    .left-panel { width: 50%; background: #7ED87F; display: flex; align-items: center; justify-content: center; padding: 40px; }
-    .left-panel h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; color: #1a2e1a; text-align: center; line-height: 1.35; max-width: 320px; }
-    .right-panel { width: 50%; background: #fff; display: flex; align-items: center; justify-content: center; padding: 40px; }
-    .login-card { width: 100%; max-width: 380px; background: #fff; border-radius: 18px; box-shadow: 0 4px 32px rgba(0,0,0,0.10); overflow: hidden; }
-    .card-header { background: #7ED87F; padding: 22px 28px; text-align: center; border-radius: 14px 14px 0 0; }
-    .card-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; color: #1a2e1a; }
-    .card-body { padding: 28px 28px 32px; }
-    .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; font-size: 0.88rem; color: #3d5c3d; margin-bottom: 7px; font-weight: 500; }
-    .input-wrap { position: relative; }
-    .input-wrap input { width: 100%; padding: 12px 44px 12px 14px; border: 1.5px solid #ccc; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.97rem; color: #1a2e1a; outline: none; transition: border-color 0.2s; }
-    .input-wrap input:focus { border-color: #3a9e3b; }
-    .toggle-pw { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; }
-    .toggle-pw svg { width: 22px; height: 22px; fill: #555; }
-    .forgot-link { display: block; text-align: right; font-size: 0.82rem; color: #1a2e1a; text-decoration: underline; margin-top: 6px; cursor: pointer; }
-    .btn-login { width: 100%; padding: 13px; background: #7ED87F; border: none; border-radius: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: #1a2e1a; cursor: pointer; margin-top: 8px; transition: background 0.18s; }
-    .btn-login:hover { background: #5ec860; }
-    .register-text { text-align: center; margin-top: 20px; font-size: 0.9rem; color: #444; }
-    .register-text a { font-weight: 700; color: #1a2e1a; text-decoration: none; }
-    .register-text a:hover { text-decoration: underline; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --login-panel-left-bg: #7ED87F;
+      --login-panel-right-bg: #fff;
+      --login-card-bg: #fff;
+      --login-header-bg: #7ED87F;
+      --login-text-strong: #1a2e1a;
+      --login-text-soft: #3d5c3d;
+      --login-text-mid: #444;
+      --login-input-border: #ccc;
+      --login-input-focus: #3a9e3b;
+      --login-icon: #555;
+      --login-shadow: 0 4px 32px rgba(0, 0, 0, 0.10);
+    }
+
+    :root[data-theme='dark'] {
+      --login-panel-left-bg: #1f3229;
+      --login-panel-right-bg: #121a16;
+      --login-card-bg: #24352d;
+      --login-header-bg: #2f4a3d;
+      --login-text-strong: #e8f3ec;
+      --login-text-soft: #c6ddcf;
+      --login-text-mid: #a8c0b2;
+      --login-input-border: #547868;
+      --login-input-focus: #7ED87F;
+      --login-icon: #c6ddcf;
+      --login-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      background: var(--login-panel-right-bg);
+    }
+
+    .left-panel {
+      width: 50%;
+      background: var(--login-panel-left-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .left-panel h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--login-text-strong);
+      text-align: center;
+      line-height: 1.35;
+      max-width: 320px;
+    }
+
+    .right-panel {
+      width: 50%;
+      background: var(--login-panel-right-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--login-card-bg);
+      border-radius: 18px;
+      box-shadow: var(--login-shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: var(--login-header-bg);
+      padding: 22px 28px;
+      text-align: center;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .card-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--login-text-strong);
+    }
+
+    .card-body {
+      padding: 28px 28px 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.88rem;
+      color: var(--login-text-soft);
+      margin-bottom: 7px;
+      font-weight: 500;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      padding: 12px 44px 12px 14px;
+      border: 1.5px solid var(--login-input-border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.97rem;
+      color: var(--login-text-strong);
+      background: var(--login-card-bg);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-wrap input:focus {
+      border-color: var(--login-input-focus);
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .toggle-pw svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--login-icon);
+    }
+
+    .forgot-link {
+      display: block;
+      text-align: right;
+      font-size: 0.82rem;
+      color: var(--login-text-strong);
+      text-decoration: underline;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: var(--login-header-bg);
+      border: none;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--login-text-strong);
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.18s;
+    }
+
+    .btn-login:hover {
+      opacity: 0.92;
+    }
+
+    .register-text {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--login-text-mid);
+    }
+
+    .register-text a {
+      font-weight: 700;
+      color: var(--login-text-strong);
+      text-decoration: none;
+    }
+
+    .register-text a:hover {
+      text-decoration: underline;
+    }
 
     /* CSS bổ sung để hiển thị thông báo lỗi/thành công từ Controller */
-    .message { padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 0.85rem; text-align: center; }
-    .message.error { background: #fdeaea; color: #d93025; border: 1px solid #f8cecc; }
-    .message.success { background: #e6f4ea; color: #1e8e3e; border: 1px solid #ceead6; }
-    .hidden { display: none; }
+    .message {
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      text-align: center;
+    }
 
-    @media (max-width: 650px) { body { flex-direction: column; } .left-panel, .right-panel { width: 100%; } .left-panel { padding: 40px 20px; min-height: 180px; } }
+    .message.error {
+      background: #fdeaea;
+      color: #d93025;
+      border: 1px solid #f8cecc;
+    }
+
+    .message.success {
+      background: #e6f4ea;
+      color: #1e8e3e;
+      border: 1px solid #ceead6;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 650px) {
+      body {
+        flex-direction: column;
+      }
+
+      .left-panel,
+      .right-panel {
+        width: 100%;
+      }
+
+      .left-panel {
+        padding: 40px 20px;
+        min-height: 180px;
+      }
+    }
   </style>
 </head>
+
 <body>
 
   <div class="left-panel">
-    <h1>Smart Automatic Irrigation Web System</h1>
+    <h1 data-i18n="login_left_title">Smart Automatic Irrigation Web System</h1>
   </div>
 
   <div class="right-panel">
     <div class="login-card">
       <div class="card-header">
-        <h2>Welcome to SAIWS!</h2>
+        <h2 data-i18n="login_welcome">Welcome to SAIWS!</h2>
       </div>
 
       <div class="card-body">
@@ -55,29 +266,32 @@
 
         <form id="loginForm">
           <div class="form-group">
-            <label for="username">Username or Email</label>
+            <label for="username" data-i18n="login_label_username_or_email">Username or Email</label>
             <div class="input-wrap">
               <input type="text" id="username" autocomplete="username" required />
             </div>
           </div>
 
           <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password" data-i18n="login_label_password">Password</label>
             <div class="input-wrap">
               <input type="password" id="password" autocomplete="current-password" required />
-              <button class="toggle-pw" onclick="togglePassword()" type="button" title="Show/hide password">
+              <button class="toggle-pw" onclick="togglePassword()" type="button" title="Show/hide password"
+                data-i18n-title="login_toggle_password">
                 <svg id="eyeIcon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                  <path
+                    d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
                 </svg>
               </button>
             </div>
           </div>
 
-          <button type="submit" class="btn-login">Login</button>
+          <button type="submit" class="btn-login" data-i18n="login_button">Login</button>
         </form>
 
         <p class="register-text">
-          Don't have any accounts? <a href="/views/signup.html">Register</a>
+          <span data-i18n="login_no_account">Don't have any accounts?</span> <a href="/views/signup.html"
+            data-i18n="login_register">Register</a>
         </p>
       </div>
     </div>
@@ -94,4 +308,5 @@
   <script type="module" src="../controllers/LoginController.js"></script>
 
 </body>
+
 </html>

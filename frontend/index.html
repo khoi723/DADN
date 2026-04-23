@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAIWS – Home</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="js/preferences.js"></script>
+  <script type="module" src="js/Devices.js"></script>
+</head>
+
+<body onload="page_Load()">
+
+  <!-- WATERING NEEDED NOTIFICATION ICON -->
+  <div id="wateringNeededIcon" class="watering-needed-icon" title="Plants need watering"
+    data-i18n-title="watering_needed_title">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.32 0z" fill="currentColor" />
+    </svg>
+    <span class="pulse-dot"></span>
+  </div>
+
+  <!-- MOISTURE WARNING MODAL -->
+  <div id="moistureWarningModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><span>⚠️ </span><span data-i18n="modal_moisture_alert">Moisture Alert</span></h2>
+        <button class="modal-close" onclick="closeMoistureWarning()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="moistureWarningText" data-i18n="modal_outside_range">Moisture level is outside the configured range!</p>
+        <p class="moisture-details"><strong data-i18n="modal_current_moisture">Current Moisture:</strong> <span
+            id="currentMoisture">0</span>%</p>
+        <p class="moisture-details"><strong data-i18n="modal_configured_range">Configured Range:</strong> <span
+            id="configuredRange"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-close" onclick="closeMoistureWarning()" data-i18n="btn_close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <span class="navbar-brand">SAIWS</span>
+    <div class="navbar-icons">
+      <div class="profile-wrap">
+        <button id="profileBtn" title="Profile" data-i18n-title="user_menu_title">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+          </svg>
+        </button>
+        <div id="profileDropdown" class="profile-dropdown">
+          <a href="pages/profile.html">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+            </svg>
+            <span data-i18n="nav_view_profile">View Profile</span>
+          </a>
+          <div class="divider"></div>
+          <a href="/views/login.html" data-logout>
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+            </svg>
+            <span data-i18n="nav_logout">Log out</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <a href="index.html" class="active" data-i18n="nav_home">Home</a>
+      <a href="pages/dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+      <a href="pages/history.html" data-i18n="nav_history">History</a>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- Header row -->
+      <div class="page-header">
+        <div class="sensor-badges">
+          <div class="badge" id="moistureBadge"><span data-i18n="badge_moisture">Moisture:</span> <span
+              id='lblMoisture'></span>%</div>
+          <div class="badge" id="humidityBadge"><span data-i18n="badge_humidity">Humidity:</span> <span
+              id='lblHumidity'></span>%</div>
+          <div class="badge" id="tempBadge"><span data-i18n="badge_temperature">Temperature:</span> <span
+              id='lblTemp'></span>°C</div>
+        </div>
+      </div>
+
+      <!-- Cards -->
+      <div class="cards">
+
+        <!-- Automatic Mode Card -->
+        <div class="mode-card selected" id="autoCard" onclick="selectMode('auto')">
+          <div class="radio-btn active" id="autoRadio"></div>
+          <div class="card-body">
+            <div class="card-title" data-i18n="home_auto">Automatic</div>
+
+            <div class="auto-row">
+              <span data-i18n="home_lower_border">Lower border</span>
+              <select class="select-pill" id="onCondition">
+                <option value="above" selected data-i18n="option_above">above</option>
+                <option value="below" data-i18n="option_below">below</option>
+              </select>
+              <input class="percent-pill" type="number" id="onValue" value="30" min="0" max="100" />
+              <span>%</span>
+            </div>
+
+            <div class="auto-row">
+              <span data-i18n="home_upper_limit">Upper limit</span>
+              <select class="select-pill" id="offCondition">
+                <option value="above" data-i18n="option_above">above</option>
+                <option value="below" selected data-i18n="option_below">below</option>
+              </select>
+              <input class="percent-pill" type="number" id="offValue" value="40" min="0" max="100" />
+              <span>%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manual Mode Card -->
+        <div class="mode-card disabled" id="manualCard" onclick="selectMode('manual')">
+          <div class="radio-btn" id="manualRadio"></div>
+          <div class="card-body">
+            <div class="card-title" data-i18n="home_manual">Manual</div>
+
+            <div class="manual-row">
+              <label for="pumpToggle" data-i18n="home_water_pump">Water pump</label>
+              <div class="toggle-wrap">
+                <label class="toggle">
+                  <input type="checkbox" id="pumpToggle" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="manual-row">
+              <label data-i18n="home_turn_off_after">Turn off after</label>
+              <select class="select-pill" id="turnOffAfter">
+                <option data-i18n="option_15_minutes">15 minutes</option>
+                <option selected data-i18n="option_30_minutes">30 minutes</option>
+                <option data-i18n="option_1_hour">1 hour</option>
+                <option data-i18n="option_2_hours">2 hours</option>
+                <option data-i18n="option_never">Never</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>

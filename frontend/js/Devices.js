@@ -10,20 +10,32 @@ let hasTriggeredOverMoistureWarning = false;
 let hasShownWateringNeeded = false;
 let isMotorRunning = false;
 
+function t(key) {
+    return window.SAIWS_PREFS && typeof window.SAIWS_PREFS.t === 'function'
+        ? window.SAIWS_PREFS.t(key)
+        : key;
+}
+
+function tf(key, params) {
+    return window.SAIWS_PREFS && typeof window.SAIWS_PREFS.tf === 'function'
+        ? window.SAIWS_PREFS.tf(key, params)
+        : key;
+}
+
 // Function to check moisture against automatic mode settings
 function checkMoistureCondition(moistureValue) {
     const onCondition = document.getElementById('onCondition')?.value || 'above';
-    const onValue = parseFloat(document.getElementById('onValue')?.value || 40);
+    const onValue = parseFloat(document.getElementById('onValue')?.value || 30);
     const offCondition = document.getElementById('offCondition')?.value || 'below';
-    const offValue = parseFloat(document.getElementById('offValue')?.value || 55);
+    const offValue = parseFloat(document.getElementById('offValue')?.value || 40);
     const moisture = parseFloat(moistureValue);
-    
+
     // Check if moisture violates turn on condition (need watering)
     const needsWatering = onCondition === 'above' ? moisture < onValue : moisture > onValue;
-    
+
     // Check if moisture violates turn off condition (over-moisture)
     const isOverMoisture = offCondition === 'above' ? moisture < offValue : moisture > offValue;
-    
+
     return { needsWatering, isOverMoisture };
 }
 
@@ -47,7 +59,7 @@ export function stopWatering() {
 }
 export function updateMoistureWarning(moistureValue) {
     const { needsWatering, isOverMoisture } = checkMoistureCondition(moistureValue);
-    
+
     if (isOverMoisture) {
         // Moisture reached upper limit - STOP watering
         if (isMotorRunning) {
@@ -60,7 +72,10 @@ export function updateMoistureWarning(moistureValue) {
         if (!hasTriggeredOverMoistureWarning) {
             const offCondition = document.getElementById('offCondition')?.value || 'below';
             const offValue = document.getElementById('offValue')?.value || '55';
-            const warningMessage = `Moisture is too high (${offCondition} ${offValue}%)`;
+            const warningMessage = tf('warning_moisture_high', {
+                condition: t(offCondition === 'above' ? 'condition_above' : 'condition_below'),
+                value: offValue
+            });
             if (window.showMoistureWarning) window.showMoistureWarning(moistureValue, warningMessage);
             hasTriggeredOverMoistureWarning = true;
         }
@@ -91,24 +106,24 @@ export function updateMoistureWarning(moistureValue) {
 // event-handler methods
 export function page_Load() {
     onValue(child(dbRef, 'DHT11'), (snapshot) => {
-    snapshot.forEach((child) => {
-        if (child.key === 'temp') {
-        document.getElementById('lblTemp').innerText = child.val();
-        }
-        if (child.key === 'humi') {
-        document.getElementById('lblHumidity').innerText = child.val();
-        }
-    });
+        snapshot.forEach((child) => {
+            if (child.key === 'temp') {
+                document.getElementById('lblTemp').innerText = child.val();
+            }
+            if (child.key === 'humi') {
+                document.getElementById('lblHumidity').innerText = child.val();
+            }
+        });
     });
     onValue(child(dbRef, 'SOIL'), (snapshot) => {
-    snapshot.forEach((child) => {
-        if (child.key === 'moist') {
-        const moistureValue = child.val();
-        document.getElementById('lblMoisture').innerText = moistureValue;
-        // Check moisture condition whenever value updates
-        updateMoistureWarning(moistureValue);
-        }
-    });
+        snapshot.forEach((child) => {
+            if (child.key === 'moist') {
+                const moistureValue = child.val();
+                document.getElementById('lblMoisture').innerText = moistureValue;
+                // Check moisture condition whenever value updates
+                updateMoistureWarning(moistureValue);
+            }
+        });
     });
 }
 

@@ -1,116 +1,149 @@
-*, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+:root {
+    --signup-bg: #f0f2f5;
+    --signup-card-bg: #fff;
+    --signup-head-bg: #b2ff9e;
+    --signup-text: #000;
+    --signup-text-soft: #333;
+    --signup-input-border: #000;
+    --signup-input-focus: #7ED87F;
+    --signup-btn-text: #4caf50;
+    --signup-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
 
-        /* Container chính của Form */
-        .register-card {
-            width: 100%;
-            max-width: 450px;
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            overflow: hidden;
-            text-align: center;
-        }
+:root[data-theme='dark'] {
+    --signup-bg: #121a16;
+    --signup-card-bg: #24352d;
+    --signup-head-bg: #2f4a3d;
+    --signup-text: #e8f3ec;
+    --signup-text-soft: #c6ddcf;
+    --signup-input-border: #587665;
+    --signup-input-focus: #7ED87F;
+    --signup-btn-text: #c8f2c9;
+    --signup-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
 
-        /* Header màu xanh lá cây nhạt */
-        .card-header {
-            background-color: #b2ff9e;
-            padding: 20px;
-        }
+body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--signup-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
 
-        .card-header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #000;
-        }
+.register-card {
+    width: 100%;
+    max-width: 450px;
+    background: var(--signup-card-bg);
+    border-radius: 20px;
+    box-shadow: var(--signup-shadow);
+    overflow: hidden;
+    text-align: center;
+}
 
-        .card-body {
-            padding: 30px 40px;
-        }
+.card-header {
+    background-color: var(--signup-head-bg);
+    padding: 20px;
+}
 
-        /* Định dạng các nhóm nhập liệu */
-        .form-group {
-            text-align: left;
-            margin-bottom: 20px;
-        }
+.card-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--signup-text);
+}
 
-        .form-group label {
-            display: block;
-            font-size: 0.95rem;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: #333;
-        }
+.card-body {
+    padding: 30px 40px;
+}
 
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1.5px solid #000;
-            border-radius: 12px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
 
-        .form-group input:focus {
-            border-color: #7ED87F;
-        }
+.form-group label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--signup-text-soft);
+}
 
-        /* Nút Sign up */
-        .btn-signup {
-            width: 100%;
-            padding: 15px;
-            background-color: #b2ff9e;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #4caf50; /* Màu chữ xanh lá đậm hơn một chút */
-            cursor: pointer;
-            margin-top: 10px;
-            transition: opacity 0.2s;
-        }
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid var(--signup-input-border);
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--signup-text);
+    background: var(--signup-card-bg);
+}
 
-        .btn-signup:hover {
-            opacity: 0.9;
-        }
+.form-group input:focus {
+    border-color: var(--signup-input-focus);
+}
 
-        /* Dòng link chuyển sang Login */
-        .login-text {
-            margin-top: 25px;
-            font-size: 0.9rem;
-            color: #333;
-        }
+.btn-signup {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--signup-head-bg);
+    border: none;
+    border-radius: 15px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--signup-btn-text);
+    cursor: pointer;
+    margin-top: 10px;
+    transition: opacity 0.2s;
+}
 
-        .login-text a {
-            font-weight: 700;
-            color: #000;
-            text-decoration: none;
-        }
+.btn-signup:hover {
+    opacity: 0.9;
+}
 
-        .login-text a:hover {
-            text-decoration: underline;
-        }
+.login-text {
+    margin-top: 25px;
+    font-size: 0.9rem;
+    color: var(--signup-text-soft);
+}
 
-        /* Khu vực hiển thị thông báo lỗi/thành công */
-        #message {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-        }
-        .hidden { display: none; }
-        .error { background: #fdeaea; color: #d93025; }
-        .success { background: #e6f4ea; color: #1e8e3e; }
+.login-text a {
+    font-weight: 700;
+    color: var(--signup-text);
+    text-decoration: none;
+}
+
+.login-text a:hover {
+    text-decoration: underline;
+}
+
+#message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.error {
+    background: #fdeaea;
+    color: #d93025;
+}
+
+.success {
+    background: #e6f4ea;
+    color: #1e8e3e;
+}
